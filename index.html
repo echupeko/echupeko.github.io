@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <link href="style/style.css" rel="stylesheet">
+    <link href="style/style_mini.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
+          rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+</head>
+<body>
+<!--Библиотеки которые нужно запустить вначале-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<!--Скрипты для маунтинга-->
+<script src="script/data/carouselList.js"></script>
+<script src="script/data/catalogList.js"></script>
+<script src="script/data/certificateList.js"></script>
+<script src="script/data/navigationList.js"></script>
+
+<!--Навигационная панель-->
+<header class="d-flex justify-content-center align-items-center w-100 fixed-top">
+    <nav id="navBar" class="w-100 navbar navbar-expand-lg navbar-light justify-content-sm-between">
+
+        <!--Кнопка меню при маленьких габаритах окна-->
+        <button id="navbarToggler" class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!--Основная панель-->
+        <div id="logo"></div>
+        <!--Навигационный лист-->
+        <div class=" collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li v-for="navItem in navItems" class="nav-item">
+                    <a class="nav-link" @click="scrollingTo(navItem.href)">{{navItem.title}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <!--Корзина-->
+        <div id="basketBar" class="hidden d-flex flex-column justify-contnent-center align-items-center" @click="openBasket">
+            <!--<p class="p-0 m-0"></p>-->
+            <img id="basketIcon" :src="basketSrc">
+            <span class="quantity" :style="{display: visibleQuantity}">
+                <p :style="{fontSize: sizeQuantity}">{{amount}}</p>
+            </span>
+        </div>
+    </nav>
+</header>
+
+<!--Головной блок-->
+<main id="main">
+    <!--Карусель-->
+    <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="3"></li>
+        </ol>
+        <div class="carousel-inner h-100">
+            <slider-item v-for="slider in sliderList" :slide="slider" :key="slider.id"></slider-item>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"><i class="fa fa-navicon"></i></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!--Хит продаж-->
+    <section id="bestseller" class="d-flex flex-column justify-content-center align-items-center" style="display: none !important">
+        <h2 class="title-block">Хит продаж</h2>
+        <div class="bckg" id="bestsellerHoney"></div>
+        <div id="hotBlock">
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                    <div id="hotItem" class="col-md-4">
+                        <img :src="this.$srcHoney + hotHoney.name + '.jpg'" class="card-img">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Мёд {{hotHoney.name}} {{prodHoney.count}}л.</h5>
+                            <div>
+                                <div class="crossOut"><span></span>
+                                    <h4>{{prodHoney.price}} руб.</h4></div>
+                                <h3>{{prodHoney.salePrice}} руб.</h3>
+                            </div>
+                            <a class="btn btn-warning" @click="orderAdd(idSale[0],idSale[1],1)">Добавить в корзину</a>
+                            <p class="card-text">
+                                <small class="text-muted">прочитать об этом виде мёда</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Каталог мёда-->
+    <section id="catalog" class="d-flex flex-column justify-content-center align-items-center" style="display: none !important">
+        <h2 class="title-block">Каталог</h2>
+        <div id="catalogBlock" class="d-flex flex-row w-100 justify-content-center flex-wrap">
+            <item v-for="catalog in honeyVueList" :cat="catalog" :products="catalog.products" :key="catalog.id"
+                  @click="orderAdd"
+                  v-on:up-down="upDownCount" v-on:slide-to="slideTo">
+            </item>
+        </div>
+    </section>
+
+    <!--Верхняя пасека-->
+    <section id="catalogUp" class="d-flex flex-column justify-content-center align-items-center">
+        <h2 class="title-block">Верхняя пасека</h2>
+        <div id="catalogBlockUp" class="d-flex flex-row w-100 justify-content-center flex-wrap">
+            <catalogup v-for="catalog in newHoneyVueList" :cat="catalog" :key="catalog.id" v-if="catalog.path[0]">
+            </catalogup>
+        </div>
+    </section>
+
+    <!--Нижняя пасека-->
+    <section id="catalogDown" class="d-flex flex-column justify-content-center align-items-center">
+        <h2 class="title-block">Нижняя пасека</h2>
+        <div id="catalogBlockDown" class="d-flex flex-row w-100 justify-content-center flex-wrap">
+            <catalogdown v-for="catalog in newHoneyVueList" :cat="catalog" :key="catalog.id" v-if="catalog.path[1]">
+            </catalogdown>
+        </div>
+    </section>
+
+    <!--Сертификаты-->
+    <section id="certificate" class="d-flex flex-column justify-content-center align-items-center">
+        <h2 class="title-block">Сертификаты</h2>
+        <div class="d-flex flex-row w-100 justify-content-center flex-wrap">
+            <certificate-item v-for="certificate in certList" :certificate="certificate" :key="certificate.id"
+                              v-on:load-viewer="loadViewer"></certificate-item>
+        </div>
+    </section>
+
+    <!--О пасеке-->
+    <section id="about" class="d-flex flex-column justify-content-center align-items-center">
+        <h2 class="title-block">О пасеке</h2>
+
+    </section>
+</main>
+
+<div id="element" class="toast d-none" style="position: fixed; top: 140px; right: 20px; z-index: 1500">
+    <div class="toast-header">
+        <!--<img src="resource/" class="rounded mr-2" alt="...">-->
+        <strong class="mr-auto">Внимание</strong>
+        <small>сейчас</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        Данная акция относится на одну единицу товара
+    </div>
+</div>
+
+<!--Форма для просмотра изображений-->
+<div id="viewer" class="d-flex justify-content-center align-items-center w-100 h-100" v-if="isActive"
+     @click="openViewer">
+    <div class="card mb-3" style="width: 50rem;">
+        <div class="row no-gutters">
+            <div class="col-md-8 d-flex justify-content-center">
+                <img :src="src" class="card-img-top" alt="...">
+            </div>
+            <div class="col-md-4">
+                <div class="card-body">
+                    <h5 class="card-title">Сертификат</h5>
+                    <p class="card-text">{{description}}</p>
+                    <p class="card-text">
+                        <small class="text-muted">{{date}}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Корзина-->
+<div id="basketForm" :style="styleObject">
+    <span class="closeBtn" @click="openBasket"></span>
+    <h4>Ваша корзина пока пуста</h4>
+    <basket-item v-for="list in basketCatalog" :cat="list" v-bind:class="{basket: isActive}" :key="list.id"
+                 v-on:up-down="upDownCount" v-on:remove="removeOrder"></basket-item>
+    <p class="m-2">Сумма заказа: <strong style="font-size: 20px">{{amount}}</strong></p>
+    <div class="d-flex flex-row justify-content-center align-items-center">
+        <span class="d-flex flex-row justify-content-center align-items-center">
+            <p class="m-2">Введите номер телефона</p>
+            <input class="m-2" id="phone" type="text" @keyup="changePhone">
+        </span>
+        <input id="send" class="btn btn-warning m-2" type="submit" value="Заказать"  @click="sendPhone">
+    </div>
+
+</div>
+
+<!--Контакты-->
+<footer id="contact">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1371.7691089278112!2d83.35821804212416!3d51.69283208923351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sru!2sru!4v1595819445139!5m2!1sru!2sru"
+            width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" scrollwheel="true"
+            aria-hidden="false" tabindex="0"></iframe>
+    <!--<iframe width="100%" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=51.692655,83.358092&amp;key=AIzaSyDZnE9Yqd1ev6tLg626gahXUTamjAcOqdY"></iframe>-->
+    <!--<div id="map"></div>-->
+    <span id="btn-to-up" onclick=" window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });"></span>
+</footer>
+
+<!--Простые скрипты-->
+<script src="script/app.js"></script>
+<script src="script/script.js"></script>
+<script src="script/post/sendPost.js"></script>
+
+<!--Vue скрипты-->
+<script src="script/vue.js"></script>
+
+<!--Компоненты и их методы-->
+<script src="script/components/carouselBlock.js"></script>
+<script src="script/components/catalogBlock.js"></script>
+<script src="script/components/catalogBlockUp.js"></script>
+<script src="script/components/catalogBlockDown.js"></script>
+<script src="script/components/basketBlock.js"></script>
+<script src="script/components/certificateBlock.js"></script>
+
+<!--Библиотеки-->
+<!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZnE9Yqd1ev6tLg626gahXUTamjAcOqdY&callback=initMap"></script>-->
+<script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>\
+<script src="script/jquery.maskedinput.min.js"></script>
+
+<!--<form id="form" method="POST">-->
+<!--<input type="text" name="name" required="required"/>-->
+<!--<input type="text" name="phone" required="required"/>-->
+<!--<input type="submit" value="Заказать звонок"/>-->
+<!--</form>-->
+<!--<div id="qa"></div>-->
+</body>
+</html>

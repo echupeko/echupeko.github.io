@@ -1,0 +1,31 @@
+if ($_POST['']);
+$honeyArr = $_POST['honeyArr'];
+$orderStr = '';
+foreach ($honeyArr as &$orderArr) {
+    $orderStr = $orderArr + ";\n"
+}
+
+$arr = [
+  'январь',
+  'февраль',
+  'март',
+  'апрель',
+  'май',
+  'июнь',
+  'июль',
+  'август',
+  'сентябрь',
+  'октябрь',
+  'ноябрь',
+  'декабрь'
+];
+$month = date('n')-1;
+$file=fopen('data.txt','a+');
+$title = "Новый заказ: \n";
+$timeNow = time();
+$dateNow = "Дата: " . date('j',$timeNow) . " " .  $arr[$month] . " " . date('Y',$timeNow) . "\nВремя создания: " . date('H:i:s',$timeNow) . "\n";
+$str = $title . $dateNow . $orderStr . "Телефон: " . $_POST['data'] . "\n\n\n";
+fputs($file,$str);
+fclose($file);
+echo 'console.log("f")';
+echo 'Успешно';

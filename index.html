@@ -257,27 +257,22 @@
     function init(){
         // Создание карты.
         var myMap = new ymaps.Map('map', {
-                center: [51.692655,83.358092],
-                zoom: 13,
+                center: [51.706491, 83.440873],
+                zoom: 12,
+                type: 'yandex#hybrid',
                 controls: []
             }),
 
-            // Создаём макет содержимого.
-            MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-                '<div style="color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
-            ),
-
-            upperPaseka = new ymaps.Placemark([51.692655,83.358092], {
+            upperPaseka = new ymaps.Placemark([51.695597, 83.439853], {
                 hintContent: 'Верхняя пасека',
-                balloonContent: 'Верхняя пасека'
             }, {
                 // Опции.
                 // Необходимо указать данный тип макета.
-                iconLayout: 'default#imageWithContent',
+                iconLayout: 'default#image',
                 // Своё изображение иконки метки.
-                iconImageHref: 'resource/bochka.png',
+                // iconImageHref: 'resource/bochka.png',
                 // Размеры метки.
-                iconImageSize: [30, 30],
+                iconImageSize: [35, 40],
                 // Смещение левого верхнего угла иконки относительно
                 // её "ножки" (точки привязки).
                 iconImageOffset: [-14, -14],
@@ -285,24 +280,22 @@
                 iconContentOffset: [15, 15]
             }),
 
-            downerPaseka = new ymaps.Placemark([51.697655,83.359092], {
+            downerPaseka = new ymaps.Placemark([51.729427, 83.437375], {
                 hintContent: 'Нижняя пасека',
-                balloonContent: 'Нижняя пасека',
             }, {
                 // Опции.
                 // Необходимо указать данный тип макета.
                 iconLayout: 'default#imageWithContent',
                 // Своё изображение иконки метки.
-                iconImageHref: 'resource/bochka.png',
+                // iconImageHref: 'resource/bochka.png',
                 // Размеры метки.
-                iconImageSize: [30, 30],
+                iconImageSize: [35, 40],
                 // Смещение левого верхнего угла иконки относительно
                 // её "ножки" (точки привязки).
                 iconImageOffset: [-14, -14],
                 // Смещение слоя с содержимым относительно слоя с картинкой.
                 iconContentOffset: [15, 15],
                 // Макет содержимого.
-                iconContentLayout: MyIconContentLayout
             });
 
         myMap.geoObjects

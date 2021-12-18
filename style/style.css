@@ -176,6 +176,7 @@ header {
 }
 
 #catalogBlock > .card,#catalogBlockUp > .card,#catalogBlockDown > .card {
+    justify-content: space-between !important;
     background-color: rgba(255, 255, 255, 0.5) !important;
     border: 3px solid #4e4c4c;
     border-radius: 10px;
@@ -189,7 +190,7 @@ header {
 }
 
 #catalogBlock .card-head,#catalogBlockUp .card-head,#catalogBlockDown .card-head{
-    border-radius: 12.5px ;
+    border-radius: 0;
     overflow: hidden;
     min-height: 200px !important;
 }
@@ -199,7 +200,8 @@ header {
 }
 
 .card-title {
-    margin-top: 10px;
+    margin: 10px;
+    text-align: center;
     font-weight: bold !important;
 }
 
